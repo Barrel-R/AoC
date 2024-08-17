@@ -11,6 +11,28 @@ xtwone3four
 zoneight234
 7pqrstsixteen"""
 
+fuck = """eightoneeight
+two9hjfsdfnone3jsdf29
+fmbbkfsdlknajxzclk24eight7
+seightq45qonee
+ztwonez
+xoneeight
+sevenine
+sevenicn
+twooneight
+seightq45qonee
+fmbbkfsdlknajxzclk24eight7
+two9hjfsdfnone3jsdf29
+eightwo5
+eightwo
+one
+47xkjdlcnvxpfddz
+oneight"""
+
+what = "47xkjdlcnvxpfddz"
+
+sampleInputV3 = "sevennine7eightpmlxqprzvjone"
+
 
 def parseLineV2(line):
     if line == "":
@@ -28,45 +50,69 @@ def parseLineV2(line):
 
     reversedKeys = [i[::-1] for i in numbers.keys()]
 
-    while left < right or leftNum == "" or rightNum == "":
+    while left < len(line):
         if leftNum == "":
-            if line[left].isdigit() and leftNum == "":
+            if line[left].isdigit():
+                if formingWordLeft in numbers.keys():
+                    leftNum = str(numbers[formingWordLeft])
+                    continue
+
                 leftNum = line[left]
-            if line[left].isalpha() and leftNum == "":
+            if line[left].isalpha():
                 if formingWordLeft in numbers.keys():
                     leftNum = str(numbers[formingWordLeft])
 
                 res = any(w.startswith(formingWordLeft)
                           for w in numbers.keys())
 
+                print('l', formingWordLeft, res)
+
                 if res:
-                    formingWordLeft += line[left]
+                    if formingWordLeft in numbers.keys():
+                        leftNum = str(numbers[formingWordLeft])
+                    else:
+                        formingWordLeft += line[left]
+                        if formingWordLeft in numbers.keys():
+                            leftNum = str(numbers[formingWordLeft])
                 else:
-                    newIndex = left - len(formingWordLeft) - 1
-                    formingWordLeft = line[newIndex]
-                    left = newIndex
+                    if not formingWordLeft == "":
+                        left -= 1
+                        formingWordLeft = formingWordLeft[1::]
 
         if rightNum == "":
-            if line[right].isdigit() and rightNum == "":
-                rightNum = line[right]
-            if line[left].isalpha() and rightNum == "":
+            if line[right].isdigit():
                 if formingWordRight in reversedKeys:
                     rightNum = str(numbers[formingWordRight[::-1]])
-                res = any(w.startswith(formingWordRight) for w in reversedKeys)
+                    continue
+
+                rightNum = line[right]
+            if line[right].isalpha():
+                if formingWordRight in reversedKeys:
+                    rightNum = str(numbers[formingWordRight[::-1]])
+
+                res = any(w.startswith(
+                    formingWordRight) for w in reversedKeys)
+
+                print('r', formingWordRight, res)
 
                 if res:
-                    formingWordRight += line[right]
+                    if formingWordRight in reversedKeys:
+                        rightNum = str(numbers[formingWordRight[::-1]])
+                    else:
+                        formingWordRight += line[right]
+                        if formingWordRight in reversedKeys:
+                            rightNum = str(numbers[formingWordRight[::-1]])
                 else:
-                    newIndex = right + len(formingWordRight) - 1
-                    formingWordRight = line[newIndex]
-                    right = newIndex
+                    if not formingWordRight == "":
+                        right += 1
+                        formingWordRight = formingWordRight[1::]
 
         left += 1
         right -= 1
 
-    print(line, leftNum, rightNum)
+    print(line, leftNum or rightNum, rightNum or leftNum)
 
-    return leftNum + rightNum  # concat strings
+    return (leftNum or rightNum) + (rightNum or leftNum)  # concat strings
 
 
 def parseLine(line):
@@ -95,8 +141,6 @@ def sumParsedLines(input):
     total = 0
     lines = input.split("\n")
 
-    # total += int(parseLineV2("seigh1toneight"))
-
     for line in lines:
         total += int(parseLineV2(line))
 
@@ -107,7 +151,7 @@ def main():
     with open("./input.txt") as file:
         inputData = file.read()
 
-    res = sumParsedLines(inputData)
+    res = sumParsedLines(what)
 
     print(res)
 
