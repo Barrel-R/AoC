@@ -11,7 +11,7 @@ xtwone3four
 zoneight234
 7pqrstsixteen"""
 
-fuck = """eightoneeight
+sampleInputV3 = """eightoneeight
 two9hjfsdfnone3jsdf29
 fmbbkfsdlknajxzclk24eight7
 seightq45qonee
@@ -27,92 +27,80 @@ eightwo5
 eightwo
 one
 47xkjdlcnvxpfddz
+sevennine7eightpmlxqprzvjone
 oneight"""
 
-what = "47xkjdlcnvxpfddz"
+writtenNumbers = ["one", "two", "three", "four",
+                  "five", "six", "seven", "eight", "nine"]
 
-sampleInputV3 = "sevennine7eightpmlxqprzvjone"
+
+def checkWord(word):
+    return word in writtenNumbers
+
+
+def formWord(word, nextLetter):
+    if word == "":
+        return nextLetter
+
+    res = any(w.startswith(word + nextLetter) for w in writtenNumbers)
+
+    if res:
+        return word + nextLetter
+    else:
+        return formWord(word[1::], nextLetter)
+
+
+def getNumbers(line, numbers, words):
+    if len(words) == 0:
+        return numbers[0] + numbers[-1]
+
+    if len(numbers) == 0:
+        return str(writtenNumbers[words[0]]) + str(writtenNumbers[words[-1]])
+
+    firstNumIndex = line.find(numbers[0])
+    firstWordIndex = line.find(words[0])
+
+    lastNumIndex = line.rindex(numbers[-1])
+    lastWordIndex = line.rindex(words[-1])
+
+    firstRes = ""
+    lastRes = ""
+
+    if firstNumIndex < firstWordIndex:
+        firstRes = numbers[0]
+    else:
+        firstRes = str(writtenNumbers.index(words[0]) + 1)
+
+    if lastNumIndex > lastWordIndex:
+        lastRes = numbers[-1]
+    else:
+        lastRes = str(writtenNumbers.index(words[-1]) + 1)
+
+    return firstRes + lastRes
 
 
 def parseLineV2(line):
     if line == "":
         return 0
 
-    left = 0
-    right = len(line) - 1
-    leftNum = ""
-    rightNum = ""
-    formingWordLeft = ""
-    formingWordRight = ""
+    numbers = []
+    formingWord = ""
+    words = []
 
-    numbers = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
-               "seven": 7, "eight": 8, "nine": 9}
+    for n in range(len(line)):
+        if checkWord(formingWord):
+            words.append(formingWord)
 
-    reversedKeys = [i[::-1] for i in numbers.keys()]
+        if line[n].isdigit():
+            numbers.append(line[n])
+        if line[n].isalpha():
+            formingWord = formWord(formingWord, line[n])
+            if checkWord(formingWord):
+                words.append(formingWord)
 
-    while left < len(line):
-        if leftNum == "":
-            if line[left].isdigit():
-                if formingWordLeft in numbers.keys():
-                    leftNum = str(numbers[formingWordLeft])
-                    continue
+    res = getNumbers(line, numbers, words)
 
-                leftNum = line[left]
-            if line[left].isalpha():
-                if formingWordLeft in numbers.keys():
-                    leftNum = str(numbers[formingWordLeft])
-
-                res = any(w.startswith(formingWordLeft)
-                          for w in numbers.keys())
-
-                print('l', formingWordLeft, res)
-
-                if res:
-                    if formingWordLeft in numbers.keys():
-                        leftNum = str(numbers[formingWordLeft])
-                    else:
-                        formingWordLeft += line[left]
-                        if formingWordLeft in numbers.keys():
-                            leftNum = str(numbers[formingWordLeft])
-                else:
-                    if not formingWordLeft == "":
-                        left -= 1
-                        formingWordLeft = formingWordLeft[1::]
-
-        if rightNum == "":
-            if line[right].isdigit():
-                if formingWordRight in reversedKeys:
-                    rightNum = str(numbers[formingWordRight[::-1]])
-                    continue
-
-                rightNum = line[right]
-            if line[right].isalpha():
-                if formingWordRight in reversedKeys:
-                    rightNum = str(numbers[formingWordRight[::-1]])
-
-                res = any(w.startswith(
-                    formingWordRight) for w in reversedKeys)
-
-                print('r', formingWordRight, res)
-
-                if res:
-                    if formingWordRight in reversedKeys:
-                        rightNum = str(numbers[formingWordRight[::-1]])
-                    else:
-                        formingWordRight += line[right]
-                        if formingWordRight in reversedKeys:
-                            rightNum = str(numbers[formingWordRight[::-1]])
-                else:
-                    if not formingWordRight == "":
-                        right += 1
-                        formingWordRight = formingWordRight[1::]
-
-        left += 1
-        right -= 1
-
-    print(line, leftNum or rightNum, rightNum or leftNum)
-
-    return (leftNum or rightNum) + (rightNum or leftNum)  # concat strings
+    return res
 
 
 def parseLine(line):
@@ -151,7 +139,7 @@ def main():
     with open("./input.txt") as file:
         inputData = file.read()
 
-    res = sumParsedLines(what)
+    res = sumParsedLines(inputData)
 
     print(res)
 
