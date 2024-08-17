@@ -5,9 +5,7 @@
 
 char *parseLine(char *line) {
   int leftPointer = 0;
-  int rightPointer = strlen(line) - 1;
-  int foundL = 0;
-  int foundR = 0;
+  int rightPointer = strlen(line) - 2;
   char *numbers = malloc(3 * sizeof(char));
 
   if (numbers == NULL) {
@@ -19,15 +17,13 @@ char *parseLine(char *line) {
   numbers[1] = '0';
   numbers[2] = '\0';
 
-  while (leftPointer < rightPointer || !foundL || !foundR) {
-    if (!foundL && isdigit(line[leftPointer])) {
+  while (leftPointer < rightPointer || numbers[0] == '0' || numbers[1] == '0') {
+    if (numbers[0] == '0' && isdigit(line[leftPointer])) {
       numbers[0] = line[leftPointer];
-      foundL = 1;
     }
 
-    if (!foundR && isdigit(line[rightPointer])) {
+    if (numbers[1] == '0' && isdigit(line[rightPointer])) {
       numbers[1] = line[rightPointer];
-      foundR = 1;
     }
 
     leftPointer++;
