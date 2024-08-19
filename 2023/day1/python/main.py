@@ -1,53 +1,7 @@
-sampleInput = """1abc2
-pqr3stu8vwx
-a1b2c3d4e5f
-treb7uchet"""
-
-sampleInputV2 = """two1nine
-eightwothree
-abcone2threexyz
-xtwone3four
-4nineeightseven2
-zoneight234
-7pqrstsixteen"""
-
-sampleInputV3 = """eightoneeight
-two9hjfsdfnone3jsdf29
-fmbbkfsdlknajxzclk24eight7
-seightq45qonee
-ztwonez
-xoneeight
-sevenine
-sevenicn
-twooneight
-seightq45qonee
-fmbbkfsdlknajxzclk24eight7
-two9hjfsdfnone3jsdf29
-eightwo5
-eightwo
-one
-47xkjdlcnvxpfddz
-sevennine7eightpmlxqprzvjone
-oneight"""
-
 writtenNumbers = ["one", "two", "three", "four",
                   "five", "six", "seven", "eight", "nine"]
 
-
-def checkWord(word):
-    return word in writtenNumbers
-
-
-def formWord(word, nextLetter):
-    if word == "":
-        return nextLetter
-
-    res = any(w.startswith(word + nextLetter) for w in writtenNumbers)
-
-    if res:
-        return word + nextLetter
-    else:
-        return formWord(word[1::], nextLetter)
+# --- PART 2 ---
 
 
 def getNumbers(line, numbers, words):
@@ -101,6 +55,24 @@ def parseLineV2(line):
     res = getNumbers(line, numbers, words)
 
     return res
+
+
+# --- PART 1 ---
+
+def checkWord(word):
+    return word in writtenNumbers
+
+
+def formWord(word, nextLetter):
+    if word == "":
+        return nextLetter
+
+    res = any(w.startswith(word + nextLetter) for w in writtenNumbers)
+
+    if res:
+        return word + nextLetter
+    else:
+        return formWord(word[1::], nextLetter)
 
 
 def parseLine(line):
