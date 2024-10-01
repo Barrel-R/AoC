@@ -1,72 +1,69 @@
 # --- part 1 ---
+symbols = ["!", "@", "#", "$", "%", "&", "*",
+           "(", ")", "-", "+", "=", "[", "]", "{", "}", ",", ";",
+           "/", "|"]
 
 
-def findNumberLen(numbersDict, numIndex):
-    if not numbersDict or numIndex not in numbersDict.keys():
-        return 0
+def checkLine(numbersToCheck, previousLine, nextLine):
+    validNumbers = []
 
-    lIndex = numIndex - 1
-    rIndex = numIndex + 1
-    len = 1
+    for indexTuple in numbersToCheck:
+        if any(char in symbols for char in previousLine[indexTuple[0]:indexTuple[1] + 1]):
+            validNumbers.append(indexTuple[2])
+        elif any(char in symbols for char in nextLine[indexTuple[0]:indexTuple[1] + 1]):
+            validNumbers.append(indexTuple[2])
 
-    for i, num in numbersDict.items():
-        if i == numIndex:
-            continue
-        elif i == lIndex:
-            len += 1
-            lIndex -= 1
-        elif i == rIndex:
-            len += 1
-            rIndex += 1
-        else:
-            return len
-
-    return len
+    return validNumbers
 
 
-def parseLine(previousLine, line, nextLine):
-    numbers = {}
-    symbols = ["!", "@", "#", "$", "%", "&", "*",
-               "(", ")", "-", "+", "=", "[", "]", "{", "}", ",", ";",
-               "/", "|"]
+def getValidNumbers(splitData, lineIndex):
+    validNumbers = []
+    numbersToCheck = []
+    mountingNum = ""
+    line = "." + splitData[lineIndex] + "."
 
     for i, char in enumerate(line):
+        prevIndex = i - len(mountingNum) - 1
         if char.isnumeric():
-            numbers[i] = char
+            mountingNum += char
+        elif char in symbols or (line[prevIndex] in symbols and mountingNum != ""):
+            validNumbers.append(mountingNum)
+            mountingNum = ""
+        elif mountingNum != "":
+            numbersToCheck.append(
+                (max(0, prevIndex), min(i, len(line)), mountingNum))
+            mountingNum = ""
 
-    print(line, findNumberLen(numbers, 0))
-    # print(numbers)
+    previousLine = ""
+    nextLine = ""
 
+    if lineIndex > 0:
+        previousLine = "." + splitData[lineIndex - 1] + "."
 
-def getValidParts(inputData):
-    total = 0
+    if lineIndex < len(splitData) - 1:
+        nextLine = "." + splitData[lineIndex + 1] + "."
 
-    splitData = inputData.split('\n')
+    validNumbers += checkLine(numbersToCheck, previousLine, nextLine)
 
-    for i, line in enumerate(splitData):
-        previousLine = splitData[i - 1]
-
-        if i == 0:
-            previousLine = ""
-
-        nextLine = ""
-
-        if i + 1 < len(splitData) - 1:
-            nextLine = splitData[i + 1]
-
-        if line == "":
-            break
-
-        parseLine(previousLine, line, nextLine)
-
-    return total
+    return validNumbers
 
 
 def main():
-    with open('./sample_input.txt') as file:
+    with open('./input.txt') as file:
         inputData = file.read()
 
-    res = getValidParts(inputData)
+    splitData = inputData.split("\n")
+    borderLines = "." * (len(splitData[0])) + "\n"
+    actualData = borderLines + inputData + borderLines
+
+    validNumbers = []
+
+    for i in range(len(splitData)):
+        validNumbers += getValidNumbers(actualData.split("\n"), i)
+
+    print(validNumbers)
+
+    res = sum([int(n) for n in filter(lambda x: x != "",  validNumbers)])
 
     print(res)
 
