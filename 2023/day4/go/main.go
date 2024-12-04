@@ -11,6 +11,26 @@ import (
 
 // --- part 2 ---
 
+func parseLineFast(lines []string) int {
+	cardInstances := make([]int, len(lines))
+	for i := range cardInstances {
+		cardInstances[i] = 1
+	}
+
+	for i := 0; i < len(lines); i++ {
+		matching := countMatchingNums(lines[i])
+		for j := 1; j <= matching && i+j < len(lines); j++ {
+			cardInstances[i+j] += cardInstances[i]
+		}
+	}
+
+	sum := 0
+	for _, instances := range cardInstances {
+		sum += instances
+	}
+	return sum
+}
+
 var cardMap = make(map[int]int, 1000) // cardId: number_of_instances
 var knownMatches = make(map[int]int, 1000)
 var lines []string
@@ -110,9 +130,7 @@ func main() {
 	ls := strings.Split(string(data), "\n")
 	lines = ls
 
-	for i := range lines {
-		parseLineRec(i)
-	}
+	fmt.Printf("fast: %v\n", parseLineFast(lines))
 
 	for val := range maps.Values(cardMap) {
 		sum += val
