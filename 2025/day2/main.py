@@ -27,25 +27,42 @@ def is_invalid(num):
     return False
 
 
-def first_part(text):
-    intervals = text.split(",")
-    total = 0
-
-    for interval in intervals:
-        start = int(interval.split("-")[0])
-        stop = int(interval.split("-")[1])
-        for num in range(start, stop + 1):
-            if is_invalid(num):
-                total += num
-
-    return total
+def is_invalid_v2(num):
+    n = str(num)
+    size = len(n)
+    acc = n[0]
+    left = 1
+    while len(acc) <= size // 2:
+        rest = size - len(acc)
+        if acc * ((rest // len(acc)) + 1) == n:
+            return True
+        else:
+            acc += n[left]
+            left += 1
+    return False
 
 
 def main():
     text = read_to_string("./input.txt")
-    res = first_part(text)
+    intervals = text.split(",")
+    total = 0
 
-    print("res: " + str(res))
+    log = "interval: "
+
+    for interval in intervals:
+        log += interval
+        start = int(interval.split("-")[0])
+        stop = int(interval.split("-")[1])
+        for num in range(start, stop + 1):
+            if is_invalid_v2(num):
+                log += " | invalid: " + str(num)
+                total += num
+            else:
+                log += " | valid: " + str(num)
+        log += "\n"
+
+    # print(log)
+    print("res: " + str(total))
 
 
 main()
